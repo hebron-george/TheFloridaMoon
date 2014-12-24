@@ -15,8 +15,8 @@ Installation
 ============
 
 There are two key steps for installing your own version of TheFloridaMoon:
-1) Create your own data.json file with your API keys in it (See below for example)
-2) Set up the proper cron job (See below for example)
+1. Create your own data.json file with your API keys in it (See below for example)
+2. Set up the proper cron job (See below for example)
 
 
 ## data.json Example ##
