@@ -20,6 +20,7 @@ There are two key steps for installing your own version of TheFloridaMoon:
 
 
 ## data.json Example ##
+```
 {
 	"keys" : [
 		{
@@ -37,7 +38,7 @@ There are two key steps for installing your own version of TheFloridaMoon:
     	}
     ]
 }
-
+```
 ## Cron Job Example ##
 ###### This job runs at 5:30 PM every day
 30 17 * * * cd /root/Projects/TheFloridaSky/ && python /root/Projects/TheFloridaSky/run.py > /root/Projects/TheFloridaSky/logs/logs.txt 2>&1
