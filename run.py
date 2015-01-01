@@ -68,5 +68,15 @@ elif cloudCover == 1:
 else:
 	print 'Weird value for cloudCover: ' + str(cloudCover) + ' at: ' + str(datetime.now().date()) + str(datetime.now().time())
 
+tags = " #florida #moon #space #stars #astronomy #science #orlando #centralflorida"
+tweet = tweet + tags
 # Post Tweet
-api.update_status(tweet)
+try:
+	api.update_status(tweet)
+except tweepy.error.TweepError:
+	print '[' + str(datetime.now()) + ']'
+	print '======= Tweet Too Long ======='
+	print '=== tweepy.error.TweepError ==='
+except e:
+	print '[' + str(datetime.now()) + ']'
+	print  e
