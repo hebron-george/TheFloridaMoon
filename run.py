@@ -37,17 +37,17 @@ if moonPhase == 0:
 elif moonPhase > 0 and moonPhase < 0.25:
 	tweet = tweet + 'Waxing Crescent Moon '
 elif moonPhase == 0.25:
-	tweet = tweet + 'First Quarter Moon tonight '
+	tweet = tweet + 'First Quarter Moon '
 elif moonPhase > 0.25 and moonPhase < 0.5:
-	tweet = tweet + 'Waxing Gibbous Moon tonight '
+	tweet = tweet + 'Waxing Gibbous Moon '
 elif moonPhase == 0.5:
-	tweet = tweet + 'Full Moon tonight '
+	tweet = tweet + 'Full Moon '
 elif moonPhase > 0.5 and moonPhase < 0.75:
-	tweet = tweet + 'Waning Gibbous Moon tonight '
+	tweet = tweet + 'Waning Gibbous Moon '
 elif moonPhase == 0.75:
-	tweet = tweet + 'Last Quarter Moon tonight '
+	tweet = tweet + 'Last Quarter Moon '
 elif moonPhase > 0.75 and moonPhase < 1:
-	tweet = tweet + 'Waning Crescent Moon tonight '
+	tweet = tweet + 'Waning Crescent Moon '
 else:
 	print 'Weird value for moonPhase: ' + str(moonPhase) + ' at: ' + str(datetime.now().date()) + str(datetime.now().time())
 
