@@ -9,25 +9,25 @@ data = json.load(json_data)
 json_data.close()
  
 # Twitter info
-CONSUMER_KEY = data['keys'][0]['CONSUMER_KEY']
+CONSUMER_KEY    = data['keys'][0]['CONSUMER_KEY']
 CONSUMER_SECRET = data['keys'][0]['CONSUMER_SECRET']
-ACCESS_KEY = data['keys'][0]['ACCESS_KEY']
-ACCESS_SECRET = data['keys'][0]['ACCESS_SECRET']
+ACCESS_KEY      = data['keys'][0]['ACCESS_KEY']
+ACCESS_SECRET   = data['keys'][0]['ACCESS_SECRET']
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 api = tweepy.API(auth)
  
-api_key = data['keys'][0]['FORECASTIO_API']
-lat = data['location'][0]['lat']
-long = data['location'][0]['long']
+api_key   = data['keys'][0]['FORECASTIO_API']
+latitude  = data['location'][0]['lat']
+longitude = data['location'][0]['long']
 
 # Forecast.io API call
-r = requests.get('https://api.forecast.io/forecast/' + api_key + '/' + lat + ',' + long)
+r = requests.get('https://api.forecast.io/forecast/' + api_key + '/' + latitude + ',' + longitude)
 weather_data = r.json()
 
 # Get tonight's moon phase and cloud cover
-moonPhase = weather_data['daily']['data'][0]['moonPhase']
+moonPhase  = weather_data['daily']['data'][0]['moonPhase']
 cloudCover = weather_data['currently']['cloudCover']
 
 tweet = '' # the string that eventually gets tweeted
@@ -68,8 +68,9 @@ elif cloudCover == 1:
 else:
 	print 'Weird value for cloudCover: ' + str(cloudCover) + ' at: ' + str(datetime.now().date()) + str(datetime.now().time())
 
-tags = " #florida #moon #space #stars #astronomy #science #orlando #centralflorida"
+tags  = " #florida #moon #space #stars #astronomy #science #orlando #centralflorida"
 tweet = tweet + tags
+
 # Post Tweet
 try:
 	api.update_status(tweet)
