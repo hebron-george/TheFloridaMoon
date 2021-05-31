@@ -16,34 +16,15 @@ APIs Used
 Installation
 ============
 
-There are two key steps for installing your own version of TheFloridaMoon:
+Set up a `.env` file with your keys in it:
 
-1. Create your own data.json file with your API keys in it (See below for example)
-2. Set up the proper cron job (See below for example)
-
-
-## data.json Example ##
-```
-{
-	"keys" : [
-		{
-		    "CONSUMER_KEY" : "YourKey",
-		    "CONSUMER_SECRET" : "YourKey",
-		    "ACCESS_KEY" : "YourKey",
-		    "ACCESS_SECRET" : "YourKey",
-		    "FORECASTIO_API" : "YourKey"
-	    }
-    ],
-    "location" : [
-    	{
-    		"lat" : "YourLat",
-    		"long" : "YourLong"
-    	}
-    ]
-}
-```
-## Cron Job Example ##
-###### This job runs at 5:30 PM every day
-```
-30 17 * * * cd /root/Projects/TheFloridaSky/ && python /root/Projects/TheFloridaSky/run.py >> /root/Projects/TheFloridaSky/logs/logs.txt 2>&1
+## .env Example ##
+```sh
+CONSUMER_KEY=yourtwitterconsumerkey
+CONSUMER_SECRET=yourtwitterconsumersecret
+ACCESS_KEY=yourtwitteraccesskey
+ACCESS_SECRET=yourtwitteraccesssecret
+FORECASTIO_API=yourforecastioapikey
+LATITUDE=yourlatitude
+LONGITUDE=yourlongitude
 ```
