@@ -2,25 +2,23 @@
 # -*- coding: utf-8 -*-
  
 from datetime import datetime
-import tweepy, time, json, requests
+import tweepy, time, json, requests, os
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
 
-json_data=open('data.json')
-data = json.load(json_data)
-json_data.close()
- 
 # Twitter info
-CONSUMER_KEY    = data['keys'][0]['CONSUMER_KEY']
-CONSUMER_SECRET = data['keys'][0]['CONSUMER_SECRET']
-ACCESS_KEY      = data['keys'][0]['ACCESS_KEY']
-ACCESS_SECRET   = data['keys'][0]['ACCESS_SECRET']
+CONSUMER_KEY    = os.environ.get('CONSUMER_KEY')
+CONSUMER_SECRET = os.environ.get('CONSUMER_SECRET')
+ACCESS_KEY      = os.environ.get('ACCESS_KEY')
+ACCESS_SECRET   = os.environ.get('ACCESS_SECRET')
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 api = tweepy.API(auth)
  
-api_key   = data['keys'][0]['FORECASTIO_API']
-latitude  = data['location'][0]['lat']
-longitude = data['location'][0]['long']
+api_key   = os.environ.get('FORECASTIO_API')
+latitude  = os.environ.get('LATITUDE')
+longitude = os.environ.get('LONGITUDE')
 
 # Forecast.io API call
 r = requests.get('https://api.forecast.io/forecast/' + api_key + '/' + latitude + ',' + longitude)
