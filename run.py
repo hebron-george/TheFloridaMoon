@@ -40,7 +40,7 @@ def moon_phase_literal(moonPhase):
 def cloud_cover_literal(cloudCover):
   if cloudCover == 0:                         return 'clear skies'
   if cloudCover > 0 and cloudCover < 0.4:     return 'partly scattered clouds'
-  if cloudCover == 0.4:                       return 'scattered clouds tonight!'
+  if cloudCover == 0.4:                       return 'scattered clouds'
   if cloudCover > 0.4 and cloudCover < 0.75:  return 'partly broken cloud cover'
   if cloudCover == 0.75:                      return 'broken cloud cover'
   if cloudCover > 0.75 and cloudCover < 1:    return 'mostly overcast skies'
