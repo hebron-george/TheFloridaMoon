@@ -2,81 +2,69 @@
 # -*- coding: utf-8 -*-
  
 from datetime import datetime
-import tweepy, time, json, requests
+import tweepy, time, json, requests, os, pdb
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
 
-json_data=open('data.json')
-data = json.load(json_data)
-json_data.close()
- 
-# Twitter info
-CONSUMER_KEY = data['keys'][0]['CONSUMER_KEY']
-CONSUMER_SECRET = data['keys'][0]['CONSUMER_SECRET']
-ACCESS_KEY = data['keys'][0]['ACCESS_KEY']
-ACCESS_SECRET = data['keys'][0]['ACCESS_SECRET']
+def get_twitter_client():
+  CONSUMER_KEY    = os.environ.get('CONSUMER_KEY')
+  CONSUMER_SECRET = os.environ.get('CONSUMER_SECRET')
+  ACCESS_KEY      = os.environ.get('ACCESS_KEY')
+  ACCESS_SECRET   = os.environ.get('ACCESS_SECRET')
 
-auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
-api = tweepy.API(auth)
- 
-api_key = data['keys'][0]['FORECASTIO_API']
-lat = data['location'][0]['lat']
-long = data['location'][0]['long']
+  auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+  auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 
-# Forecast.io API call
-r = requests.get('https://api.forecast.io/forecast/' + api_key + '/' + lat + ',' + long)
-weather_data = r.json()
+  return tweepy.API(auth)
 
-# Get tonight's moon phase and cloud cover
-moonPhase = weather_data['daily']['data'][0]['moonPhase']
-cloudCover = weather_data['currently']['cloudCover']
+def get_weather_data(): 
+  api_key   = os.environ.get('FORECASTIO_API')
+  latitude  = os.environ.get('LATITUDE')
+  longitude = os.environ.get('LONGITUDE')
 
-tweet = '' # the string that eventually gets tweeted
+  r = requests.get('https://api.forecast.io/forecast/' + api_key + '/' + latitude + ',' + longitude)
+  return r.json()
 
-if moonPhase == 0:
-	tweet = tweet + 'New Moon '
-elif moonPhase > 0 and moonPhase < 0.25:
-	tweet = tweet + 'Waxing Crescent Moon '
-elif moonPhase == 0.25:
-	tweet = tweet + 'First Quarter Moon '
-elif moonPhase > 0.25 and moonPhase < 0.5:
-	tweet = tweet + 'Waxing Gibbous Moon '
-elif moonPhase == 0.5:
-	tweet = tweet + 'Full Moon '
-elif moonPhase > 0.5 and moonPhase < 0.75:
-	tweet = tweet + 'Waning Gibbous Moon '
-elif moonPhase == 0.75:
-	tweet = tweet + 'Last Quarter Moon '
-elif moonPhase > 0.75 and moonPhase < 1:
-	tweet = tweet + 'Waning Crescent Moon '
-else:
-	print 'Weird value for moonPhase: ' + str(moonPhase) + ' at: ' + str(datetime.now().date()) + str(datetime.now().time())
+def moon_phase_literal(moonPhase):
+  if moonPhase == 0:                        return 'New Moon '
+  if moonPhase > 0 and moonPhase < 0.25:    return 'Waxing Crescent Moon '
+  if moonPhase == 0.25:                     return 'First Quarter Moon '
+  if moonPhase > 0.25 and moonPhase < 0.5:  return 'Waxing Gibbous Moon '
+  if moonPhase == 0.5:                      return 'Full Moon '
+  if moonPhase > 0.5 and moonPhase < 0.75:  return 'Waning Gibbous Moon '
+  if moonPhase == 0.75:                     return 'Last Quarter Moon '
+  if moonPhase > 0.75 and moonPhase < 1:    return 'Waning Crescent Moon '
+  
+  raise Exception("Weird value for moon phase: {}, expecting a value >= 0 and < 1".format(moonPhase))
 
-if cloudCover == 0:
-	tweet = tweet + 'with clear skies tonight!'
-elif cloudCover > 0 and cloudCover < 0.4:
-	tweet = tweet + 'with partly scattered clouds tonight!'
-elif cloudCover == 0.4:
-	tweet = tweet + 'with scattered clouds tonight!'
-elif cloudCover > 0.4 and cloudCover < 0.75:
-	tweet = tweet + 'with partly broken cloud cover tonight!'
-elif cloudCover == 0.75:
-	tweet = tweet + 'with broken cloud cover tonight!'
-elif cloudCover > 0.75 and cloudCover < 1:
-	tweet = tweet + 'with mostly overcast skies tonight!'
-elif cloudCover == 1:
-	tweet = tweet + 'with completely overcast skies tonight!'
-else:
-	print 'Weird value for cloudCover: ' + str(cloudCover) + ' at: ' + str(datetime.now().date()) + str(datetime.now().time())
+def cloud_cover_literal(cloudCover):
+  if cloudCover == 0:                         return 'clear skies'
+  if cloudCover > 0 and cloudCover < 0.4:     return 'partly scattered clouds'
+  if cloudCover == 0.4:                       return 'scattered clouds tonight!'
+  if cloudCover > 0.4 and cloudCover < 0.75:  return 'partly broken cloud cover'
+  if cloudCover == 0.75:                      return 'broken cloud cover'
+  if cloudCover > 0.75 and cloudCover < 1:    return 'mostly overcast skies'
+  if cloudCover == 1:                         return 'completely overcast skies'
+  
+  raise Exception("Weird value for cloud cover: {}, expecting a value >= 0 and <= 1".format(cloudCover))
 
-tags = " #florida #moon #space #stars #astronomy #science #orlando #centralflorida"
-tweet = tweet + tags
-# Post Tweet
-try:
-	api.update_status(tweet)
-except tweepy.error.TweepError:
-	print '[' + str(datetime.now()) + ']'
-	print '======= Tweet Too Long ======='
-	print '=== tweepy.error.TweepError ==='
-except e:
-	print '[' + str(datetime.now()) + ']'
-	print  e
+def build_tweet(moonPhase, cloudCover):
+  tweet = ''
+  tweet += moon_phase_literal(moonPhase)
+  tweet += 'with '
+  tweet += cloud_cover_literal(cloudCover)
+  tweet += ' tonight!'
+  tags  = " #florida #moon #space #stars #astronomy #science #orlando #centralflorida"
+  tweet += tags
+
+  return tweet
+
+def run_bot():
+  weather_data = get_weather_data()
+  moonPhase    = weather_data['daily']['data'][0]['moonPhase']
+  cloudCover   = weather_data['currently']['cloudCover']
+  tweet        = build_tweet(moonPhase, cloudCover)
+
+  get_twitter_client().update_status(tweet)
+
+run_bot()
