@@ -59,23 +59,12 @@ def build_tweet(moonPhase, cloudCover):
 
   return tweet
 
-def post_to_twitter(tweet):
-  try:
-    get_twitter_client().update_status(tweet)
-  except tweepy.error.TweepError:
-    print '[' + str(datetime.now()) + ']'
-    print '======= Tweet Too Long ======='
-    print '=== tweepy.error.TweepError ==='
-  except e:
-    print '[' + str(datetime.now()) + ']'
-    print  e
-
 def run_bot():
   weather_data = get_weather_data()
   moonPhase    = weather_data['daily']['data'][0]['moonPhase']
   cloudCover   = weather_data['currently']['cloudCover']
   tweet        = build_tweet(moonPhase, cloudCover)
 
-  post_to_twitter(tweet)
+  get_twitter_client().update_status(tweet)
 
 run_bot()
